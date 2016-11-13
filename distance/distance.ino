@@ -1,3 +1,11 @@
+/*
+
+Calculates distance based on this tutorial: http://www.circuitbasics.com/how-to-set-up-an-ultrasonic-range-finder-on-an-arduino/
+
+Requires SimpleDHT and LiquidCrystal libs.
+
+*/
+
 #include <SimpleDHT.h>
 #include <LiquidCrystal.h>
 
@@ -13,6 +21,7 @@ LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
 SimpleDHT11 dht;
 
+// Setup LCD and pins.
 void setup()
 {
   lcd.begin(16, 2);
@@ -25,6 +34,7 @@ void setup()
   pinMode(redLED, OUTPUT);
 }
 
+// Red LED indicates out of range.
 void lightRedLED()
 {
   digitalWrite(redLED, HIGH);
@@ -32,6 +42,7 @@ void lightRedLED()
   digitalWrite(yellowLED, LOW);
 }
 
+// Yellow LED indicates medium range.
 void lightYellowLED()
 {
   digitalWrite(yellowLED, HIGH);
@@ -39,6 +50,7 @@ void lightYellowLED()
   digitalWrite(redLED, LOW);
 }
 
+// Green LED indicates close range.
 void lightGreenLED()
 {
   digitalWrite(greenLED, HIGH);
@@ -46,6 +58,7 @@ void lightGreenLED()
   digitalWrite(redLED, LOW);
 }
 
+// Print distance in serial for debug.
 void printDistance(float distance)
 {
   lcd.clear();
@@ -66,6 +79,7 @@ void printDistance(float distance)
   }
 }
 
+// Print temp/humidity in serial for debug.
 void printDHTResults(int t, int h)
 {
   Serial.print("Sample OK: ");
@@ -75,6 +89,7 @@ void printDHTResults(int t, int h)
   Serial.println(" %");
 }
 
+// Constantly record distance and print to LCD screen.
 void loop()
 {
   byte temperature = 0;
