@@ -65,7 +65,8 @@ void printDistance(float distance)
   }
 }
 
-double getTemp(int raw) {
+double getTemp(int raw)
+{
   double temp;
   temp = log(10000.0*((1024.0/raw-1))); 
   temp = 1 / (0.001129148 + (0.000234125 + (0.0000000876741 * temp * temp ))* temp );
@@ -73,7 +74,8 @@ double getTemp(int raw) {
   return temp;
 }
 
-void loop() {
+void loop()
+{
   float duration, distance, spdSnd;
   double temp;
   temp = getTemp(analogRead(5));
