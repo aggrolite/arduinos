@@ -3,10 +3,11 @@
 
 #define trigPin 10
 #define echoPin 13
-#define dhtPin 0
+#define dhtPin 9
 #define greenLED 8
 #define yellowLED 7
 #define redLED 6
+#define offset 3
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
@@ -65,20 +66,25 @@ void printDistance(float distance)
   }
 }
 
-double getTemp(int raw)
+void printDHTResults(int t, int h)
 {
-  double temp;
-  temp = log(10000.0*((1024.0/raw-1))); 
-  temp = 1 / (0.001129148 + (0.000234125 + (0.0000000876741 * temp * temp ))* temp );
-  temp = temp - 273.15;          
-  return temp;
+  Serial.print("Sample OK: ");
+  Serial.print(t);
+  Serial.print(" *C, ");
+  Serial.print(h);
+  Serial.println(" %");
 }
 
 void loop()
 {
-  float duration, distance, spdSnd;
-  double temp;
-  temp = getTemp(analogRead(5));
+  byte temperature = 0;
+  byte humidity = 0;
+  if (dht.read(dhtPin, &temperature, &humidity, NULL)) {
+    Serial.println("Read DHT11 failed.");
+    return;
+  }
+  printDHTResults((int)temperature, (int)humidity);
+
   digitalWrite(trigPin, LOW); 
   delayMicroseconds(2);
  
@@ -86,9 +92,11 @@ void loop()
   delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
   
-  duration = pulseIn(echoPin, HIGH);
-  spdSnd = 331.4 + (0.606 * temp) + 0.62;
-  distance = (duration / 2) * (spdSnd / 10000);
+  float duration = pulseIn(echoPin, HIGH);
+  float spdSnd = 331.4 + (0.606 * (int)temperature) + 0.0124 * (int)humidity;
+  float distance = (duration / 2) * (spdSnd / 10000);
+
+  distance += offset;
   
   printDistance(distance);
   delay(500);
